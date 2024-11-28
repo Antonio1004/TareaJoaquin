@@ -1,31 +1,66 @@
-const posts = [
-    { id: 1, title: "Primer Post", author: "Usuario1", content: "Contenido del primer post" },
-    { id: 2, title: "Segundo Post", author: "Usuario2", content: "Contenido del segundo post" }
-];
-function loadPosts() {
-    const postsTable = document.getElementById("postsTable");
-    postsTable.innerHTML = ""; 
+// URLs de la API
+const artUrl = "http://localhost:3000/articles";
+const userUrl = "http://localhost:3000/users";
 
-    posts.forEach(post => {
-        const row = document.createElement("tr");
+// Función para obtener artículos
+function fetchArticles() {
+    return fetch(artUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Error al obtener los artículos");
+            }
+            return response.json(); // Devuelve un array de artículos
+        })
+        .catch(error => {
+            console.error(error);
+            return [];
+        });
+}
 
-        const titleCell = document.createElement("td");
-        titleCell.textContent = post.title;
-        row.appendChild(titleCell);
+// Función para obtener usuarios
+function fetchUsers() {
+    return fetch(userUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Error al obtener los usuarios");
+            }
+            return response.json(); // Devuelve un array de usuarios
+        })
+        .catch(error => {
+            console.error(error);
+            return [];
+        });
+}
 
-        const authorCell = document.createElement("td");
-        authorCell.textContent = post.author;
-        row.appendChild(authorCell);
+// Función para mostrar la lista combinada en la tabla
+function displayUsers(libros, users) {
+    const userList = document.getElementById("postsTable");
+    userList.innerHTML = ""; // Limpia la tabla
 
-        const actionsCell = document.createElement("td");
-        const viewButton = document.createElement("a");
-        viewButton.textContent = "Ver";
-        viewButton.href = `post-details.html?id=${post.id}`; // Pasar ID como parámetro
-        actionsCell.appendChild(viewButton);
-        row.appendChild(actionsCell);
+    libros.forEach(libro => {
+        const tr = document.createElement("tr");
+        const tdName = document.createElement("td");
+        const tdUser = document.createElement("td");
 
-        postsTable.appendChild(row);
+        tdName.textContent = libro.title;
+
+        // Busca el autor correspondiente al artículo
+        const author = users.find(user => user.id == libro.authorId);
+        tdUser.textContent = author ? author.name : "Desconocido";
+
+        tr.appendChild(tdName);
+        tr.appendChild(tdUser);
+        userList.appendChild(tr);
     });
 }
 
-document.addEventListener("DOMContentLoaded", loadPosts);
+// Llamada principal para cargar los datos
+fetchArticles()
+    .then(libros => {
+        return fetchUsers().then(users => {
+            displayUsers(libros, users); // Muestra los datos combinados
+        });
+    })
+    .catch(error => {
+        console.error("Error al cargar los datos:", error);
+    });
