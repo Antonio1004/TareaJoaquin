@@ -4,3 +4,7 @@ nav a.active {
     color: white !important;
     border-bottom: 2px solid #007BFF;
   }
+
+  .botonVermas{
+    background: rgb(6, 141, 219);
+  }

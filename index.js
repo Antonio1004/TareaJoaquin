@@ -1,4 +1,3 @@
-// URLs de la API
 const artUrl = "http://localhost:3000/articles";
 const userUrl = "http://localhost:3000/users";
 
@@ -41,15 +40,21 @@ function displayUsers(libros, users) {
         const tr = document.createElement("tr");
         const tdName = document.createElement("td");
         const tdUser = document.createElement("td");
+        const vermas =document.createElement("a");
+        const ancla =document.createElement("button");
+        ancla.textContent="Ver Mas";
+        vermas.href=`post-details.html?id=${libro.id}`;
+        vermas.appendChild(ancla);        
 
         tdName.textContent = libro.title;
 
-        // Busca el autor correspondiente al artículo
         const author = users.find(user => user.id == libro.authorId);
+        
         tdUser.textContent = author ? author.name : "Desconocido";
 
         tr.appendChild(tdName);
         tr.appendChild(tdUser);
+        tr.appendChild(vermas)
         userList.appendChild(tr);
     });
 }
